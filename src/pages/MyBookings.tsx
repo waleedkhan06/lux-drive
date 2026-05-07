@@ -65,11 +65,21 @@ const statusConfig: Record<BookingStatus, { label: string; color: string; bg: st
   cancelled: { label: 'Cancelled', color: 'text-red-400', bg: 'bg-[rgba(239,68,68,0.1)]', border: 'border-[rgba(239,68,68,0.25)]' },
 };
 
+function loadBookings(): Booking[] {
+  try {
+    const saved = JSON.parse(localStorage.getItem('luxdrive_bookings') || '[]') as Booking[];
+    return [...saved, ...mockBookings];
+  } catch {
+    return mockBookings;
+  }
+}
+
 export default function MyBookings() {
   const navigate = useNavigate();
   const { isSignedIn, user } = useUser();
   const { isDark } = useTheme();
   const [filter, setFilter] = useState<'all' | BookingStatus>('all');
+  const [bookings, setBookings] = useState<Booking[]>(loadBookings);
 
   if (!isSignedIn) {
     return (
@@ -92,13 +102,23 @@ export default function MyBookings() {
     );
   }
 
-  const filtered = filter === 'all' ? mockBookings : mockBookings.filter((b) => b.status === filter);
+  const cancelBooking = (id: string) => {
+    const updated = bookings.map((b) => b.id === id ? { ...b, status: 'cancelled' as BookingStatus } : b);
+    setBookings(updated);
+    try {
+      const savedIds = new Set(mockBookings.map((b) => b.id));
+      const realOnly = updated.filter((b) => !savedIds.has(b.id));
+      localStorage.setItem('luxdrive_bookings', JSON.stringify(realOnly));
+    } catch {}
+  };
+
+  const filtered = filter === 'all' ? bookings : bookings.filter((b) => b.status === filter);
   const counts = {
-    all: mockBookings.length,
-    upcoming: mockBookings.filter((b) => b.status === 'upcoming').length,
-    active: mockBookings.filter((b) => b.status === 'active').length,
-    completed: mockBookings.filter((b) => b.status === 'completed').length,
-    cancelled: mockBookings.filter((b) => b.status === 'cancelled').length,
+    all: bookings.length,
+    upcoming: bookings.filter((b) => b.status === 'upcoming').length,
+    active: bookings.filter((b) => b.status === 'active').length,
+    completed: bookings.filter((b) => b.status === 'completed').length,
+    cancelled: bookings.filter((b) => b.status === 'cancelled').length,
   };
 
   const filterTabs: { key: 'all' | BookingStatus; label: string; count: number }[] = [
@@ -263,6 +283,7 @@ export default function MyBookings() {
                         </button>
                         {booking.status === 'upcoming' && (
                           <button
+                            onClick={() => cancelBooking(booking.id)}
                             className={`px-3 py-2 rounded-xl border transition-all ${
                               isDark ? 'border-red-500/30 text-red-400 hover:bg-red-500/10' : 'border-red-400/40 text-red-500 hover:bg-red-50'
                             }`}

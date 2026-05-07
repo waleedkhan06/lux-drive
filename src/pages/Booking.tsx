@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cars } from '@/data';
@@ -104,12 +104,27 @@ export default function Booking() {
     { num: 4, label: 'Confirm' },
   ];
 
-  const totalDays = 3;
   const dailyRate = car.pricePerDay;
   const insurance = 49;
   const deliveryFee = 99;
-  const taxes = Math.round(dailyRate * totalDays * 0.08);
+
+  const calcDays = () => {
+    const pickup = bookingData.pickupDate as string;
+    const ret = bookingData.returnDate as string;
+    const pickupTime = (bookingData.pickupTime as string) || '10:00';
+    const returnTime = (bookingData.returnTime as string) || '10:00';
+    if (!pickup || !ret) return 1;
+    const start = new Date(`${pickup}T${pickupTime}`);
+    const end = new Date(`${ret}T${returnTime}`);
+    const diffMs = end.getTime() - start.getTime();
+    if (diffMs <= 0) return 1;
+    const diffHours = diffMs / (1000 * 60 * 60);
+    return Math.max(1, Math.ceil(diffHours / 24));
+  };
+
+  const totalDays = calcDays();
   const subtotal = dailyRate * totalDays;
+  const taxes = Math.round(subtotal * 0.08);
   const total = subtotal + insurance + deliveryFee + taxes;
 
   return (
@@ -154,6 +169,7 @@ export default function Booking() {
                     <Step1Form
                       key="step1"
                       defaultValues={bookingData}
+                      onDateChange={(data) => setBookingData((prev) => ({ ...prev, ...data }))}
                       onSubmit={(data) => {
                         setBookingData((prev) => ({ ...prev, ...data }));
                         setStep(2);
@@ -177,7 +193,21 @@ export default function Booking() {
                       defaultValues={bookingData}
                       onBack={() => setStep(2)}
                       onSubmit={(data) => {
-                        setBookingData((prev) => ({ ...prev, ...data }));
+                        const finalData = { ...bookingData, ...data };
+                        setBookingData(finalData);
+                        const newBooking = {
+                          id: bookingRef,
+                          carId: car.id,
+                          pickupDate: (finalData.pickupDate as string) || '',
+                          returnDate: (finalData.returnDate as string) || '',
+                          pickupLocation: (finalData.pickupLocation as string) || '',
+                          total,
+                          status: 'upcoming',
+                        };
+                        try {
+                          const existing = JSON.parse(localStorage.getItem('luxdrive_bookings') || '[]');
+                          localStorage.setItem('luxdrive_bookings', JSON.stringify([newBooking, ...existing]));
+                        } catch { /* storage unavailable */ }
                         setConfirmed(true);
                       }}
                     />
@@ -259,11 +289,22 @@ export default function Booking() {
   );
 }
 
-function Step1Form({ defaultValues, onSubmit }: { defaultValues: Record<string, unknown>; onSubmit: (data: Record<string, unknown>) => void }) {
+function Step1Form({ defaultValues, onSubmit, onDateChange }: { defaultValues: Record<string, unknown>; onSubmit: (data: Record<string, unknown>) => void; onDateChange?: (data: Partial<Record<string, unknown>>) => void }) {
   const { isDark } = useTheme();
   const inputCls = useInputCls();
   const labelCls = useLabelCls();
-  const { register, handleSubmit, formState: { errors } } = useForm<z.infer<typeof step1Schema>>({ resolver: zodResolver(step1Schema) as never, defaultValues: defaultValues as z.infer<typeof step1Schema> });
+  const { register, handleSubmit, formState: { errors }, watch } = useForm<z.infer<typeof step1Schema>>({ resolver: zodResolver(step1Schema) as never, defaultValues: defaultValues as z.infer<typeof step1Schema> });
+
+  const pickupDate = watch('pickupDate');
+  const returnDate = watch('returnDate');
+  const pickupTime = watch('pickupTime');
+  const returnTime = watch('returnTime');
+
+  useEffect(() => {
+    if (onDateChange) {
+      onDateChange({ pickupDate, returnDate, pickupTime, returnTime });
+    }
+  }, [pickupDate, returnDate, pickupTime, returnTime, onDateChange]);
 
   return (
     <motion.form initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} onSubmit={handleSubmit(onSubmit)} className="space-y-5">
