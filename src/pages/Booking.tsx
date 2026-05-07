@@ -263,7 +263,7 @@ function Step1Form({ defaultValues, onSubmit }: { defaultValues: Record<string, 
   const { isDark } = useTheme();
   const inputCls = useInputCls();
   const labelCls = useLabelCls();
-  const { register, handleSubmit, formState: { errors } } = useForm({ resolver: zodResolver(step1Schema), defaultValues });
+  const { register, handleSubmit, formState: { errors } } = useForm<z.infer<typeof step1Schema>>({ resolver: zodResolver(step1Schema) as never, defaultValues: defaultValues as z.infer<typeof step1Schema> });
 
   return (
     <motion.form initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} onSubmit={handleSubmit(onSubmit)} className="space-y-5">
@@ -346,7 +346,7 @@ function Step2Form({ defaultValues, onBack, onSubmit }: { defaultValues: Record<
   const { isDark } = useTheme();
   const inputCls = useInputCls();
   const labelCls = useLabelCls();
-  const { register, handleSubmit, formState: { errors } } = useForm({ resolver: zodResolver(step2Schema), defaultValues });
+  const { register, handleSubmit, formState: { errors } } = useForm<z.infer<typeof step2Schema>>({ resolver: zodResolver(step2Schema) as never, defaultValues: defaultValues as z.infer<typeof step2Schema> });
 
   return (
     <motion.form initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} onSubmit={handleSubmit(onSubmit)} className="space-y-5">
@@ -414,7 +414,7 @@ function Step3Form({ defaultValues, onBack, onSubmit }: { defaultValues: Record<
   const { isDark } = useTheme();
   const inputCls = useInputCls();
   const labelCls = useLabelCls();
-  const { register, handleSubmit, formState: { errors } } = useForm({ resolver: zodResolver(step3Schema), defaultValues });
+  const { register, handleSubmit, formState: { errors } } = useForm<z.infer<typeof step3Schema>>({ resolver: zodResolver(step3Schema) as never, defaultValues: defaultValues as z.infer<typeof step3Schema> });
 
   return (
     <motion.form initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} onSubmit={handleSubmit(onSubmit)} className="space-y-5">

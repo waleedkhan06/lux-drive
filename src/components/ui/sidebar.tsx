@@ -25,6 +25,10 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 
+let _skeletonCounter = 0
+const _skeletonWidths = [50, 55, 60, 65, 70, 75, 80, 85, 90]
+function getSkeletonWidth() { return _skeletonWidths[_skeletonCounter++ % _skeletonWidths.length] }
+
 const SIDEBAR_COOKIE_NAME = "sidebar_state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
 const SIDEBAR_WIDTH = "16rem"
@@ -606,10 +610,7 @@ function SidebarMenuSkeleton({
 }: React.ComponentProps<"div"> & {
   showIcon?: boolean
 }) {
-  // Random width between 50 to 90%.
-  const width = React.useMemo(() => {
-    return `${Math.floor(Math.random() * 40) + 50}%`
-  }, [])
+  const [width] = React.useState(() => `${getSkeletonWidth()}%`)
 
   return (
     <div
@@ -722,5 +723,6 @@ export {
   SidebarRail,
   SidebarSeparator,
   SidebarTrigger,
-  useSidebar,
 }
+// eslint-disable-next-line react-refresh/only-export-components
+export { useSidebar }

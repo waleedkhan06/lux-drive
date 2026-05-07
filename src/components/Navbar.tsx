@@ -46,7 +46,7 @@ export default function Navbar() {
   return (
     <>
       <motion.nav
-        className="fixed top-0 left-0 right-0 z-50"
+        className="fixed top-0 left-0 right-0 z-[105]"
         initial={{ y: -80 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1.0] }}
@@ -160,13 +160,16 @@ export default function Navbar() {
                   >
                     Book Now
                   </button>
-                  <UserButton
-                    appearance={{
-                      elements: {
-                        avatarBox: 'w-9 h-9 ring-2 ring-[#006B5E] ring-offset-2 ring-offset-transparent',
-                      },
-                    }}
-                  />
+                  <span className="flex items-center">
+                    <UserButton
+                      appearance={{
+                        elements: {
+                          avatarBox: 'w-9 h-9 ring-2 ring-[#006B5E] ring-offset-1 ring-offset-transparent',
+                          userButtonTrigger: 'flex items-center',
+                        },
+                      }}
+                    />
+                  </span>
                 </>
               ) : (
                 <>
@@ -224,7 +227,7 @@ export default function Navbar() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: '100%' }}
             transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1.0] }}
-            className="fixed inset-0 z-[60] flex flex-col overflow-x-hidden"
+            className="fixed inset-0 z-[110] flex flex-col overflow-x-hidden"
             style={{ background: isDark ? '#050505' : '#FFFFFF' }}
           >
             <div className={`flex items-center justify-between px-6 h-20 border-b ${isDark ? 'border-[rgba(255,255,255,0.06)]' : 'border-[rgba(0,0,0,0.06)]'}`}>
@@ -267,7 +270,16 @@ export default function Navbar() {
                   >
                     Book a Car
                   </button>
-                  <UserButton />
+                  <span className="flex items-center shrink-0">
+                    <UserButton
+                      appearance={{
+                        elements: {
+                          avatarBox: 'w-10 h-10 ring-2 ring-[#006B5E] ring-offset-1 ring-offset-transparent',
+                          userButtonTrigger: 'flex items-center',
+                        },
+                      }}
+                    />
+                  </span>
                 </div>
               ) : (
                 <>
