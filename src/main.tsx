@@ -6,9 +6,9 @@ import { ClerkProvider } from '@clerk/clerk-react'
 import { ThemeProvider } from './context/ThemeContext'
 import { WishlistProvider } from './context/WishlistContext'
 
-const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
+const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY as string
 if (!clerkPubKey) {
-  throw new Error('Missing Clerk publishable key')
+  console.error('Missing VITE_CLERK_PUBLISHABLE_KEY — add it to your Vercel environment variables')
 }
 
 createRoot(document.getElementById('root')!).render(
