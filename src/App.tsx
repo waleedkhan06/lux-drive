@@ -15,10 +15,18 @@ import Wishlist from '@/pages/Wishlist';
 import FAQ from '@/pages/FAQ';
 import Chatbot from '@/components/Chatbot';
 
+let globalLenis: Lenis | null = null;
+
 function ScrollToTop() {
   const { pathname } = useLocation();
   useEffect(() => {
-    window.scrollTo(0, 0);
+    if (globalLenis) {
+      globalLenis.scrollTo(0, { immediate: true });
+    } else {
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    }
   }, [pathname]);
   return null;
 }
@@ -33,6 +41,7 @@ function LenisProvider({ children }: { children: React.ReactNode }) {
       touchMultiplier: 1.5,
     });
     lenisRef.current = lenis;
+    globalLenis = lenis;
 
     function raf(time: number) {
       lenis.raf(time);
@@ -42,6 +51,7 @@ function LenisProvider({ children }: { children: React.ReactNode }) {
 
     return () => {
       lenis.destroy();
+      globalLenis = null;
     };
   }, []);
 
