@@ -18,7 +18,7 @@ export default function Fleet() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedFuel, setSelectedFuel] = useState<string[]>([]);
   const [selectedSeats, setSelectedSeats] = useState<string>('');
-  const [priceRange, setPriceRange] = useState<[number, number]>([200, 3000]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([200, 6000]);
   const [sortBy, setSortBy] = useState('popular');
   const [showFilters, setShowFilters] = useState(false);
 
@@ -45,7 +45,7 @@ export default function Fleet() {
     return result;
   }, [searchQuery, selectedBrands, selectedCategories, selectedFuel, selectedSeats, priceRange, sortBy]);
 
-  const hasFilters = selectedBrands.length || selectedCategories.length || selectedFuel.length || selectedSeats || priceRange[0] > 200 || priceRange[1] < 3000;
+  const hasFilters = selectedBrands.length || selectedCategories.length || selectedFuel.length || selectedSeats || priceRange[0] > 200 || priceRange[1] < 6000;
 
   const toggleBrand = (b: string) => setSelectedBrands((prev) => (prev.includes(b) ? prev.filter((x) => x !== b) : [...prev, b]));
   const toggleCategory = (c: string) => setSelectedCategories((prev) => (prev.includes(c) ? prev.filter((x) => x !== c) : [...prev, c]));
@@ -57,7 +57,7 @@ export default function Fleet() {
     setSelectedCategories([]);
     setSelectedFuel([]);
     setSelectedSeats('');
-    setPriceRange([200, 3000]);
+    setPriceRange([200, 6000]);
     setSortBy('popular');
   };
 
