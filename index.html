@@ -33,7 +33,19 @@
     <!-- Preload critical first-paint hero image (LCP) -->
     <link rel="preload" as="image" href="/images/audi r8 gtbg.png" fetchpriority="high" />
 
+    <!-- Preconnect for auth + analytics -->
+    <link rel="preconnect" href="https://clerk.accounts.dev" crossorigin />
+    <link rel="dns-prefetch" href="https://clerk.accounts.dev" />
+    <link rel="dns-prefetch" href="https://vitals.vercel-insights.com" />
+    <link rel="dns-prefetch" href="https://va.vercel-scripts.com" />
+
     <!-- Fonts: preconnect + non-render-blocking with display=swap -->
+    <!-- Inline critical CSS to avoid render-blocking -->
+    <style>
+      *,::before,::after{box-sizing:border-box}
+      body{margin:0;font-family:Inter,system-ui,-apple-system,sans-serif;background:#050505;color:#fff}
+      #root{min-height:100vh}
+    </style>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" />

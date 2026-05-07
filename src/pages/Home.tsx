@@ -236,7 +236,7 @@ function Hero() {
               <motion.h1
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3, duration: 0.8, ease: [0.25, 0.1, 0.25, 1.0] }}
+                transition={{ delay: 0.1, duration: 0.6, ease: [0.25, 0.1, 0.25, 1.0] }}
                 className={`mt-6 text-5xl md:text-6xl lg:text-7xl font-black leading-[0.95] tracking-[-0.02em] ${
                   isDark ? 'text-white' : 'text-[#0A0A0A]'
                 }`}
@@ -336,29 +336,34 @@ function Hero() {
                 className="absolute inset-0 flex items-center justify-center overflow-hidden cursor-pointer"
                 aria-label={`View ${currentCar.name}`}
               >
-                {heroCars.map((car, idx) => (
-                  <motion.img
-                    key={car.name}
-                    src={car.src}
-                    alt={car.name}
-                    loading={idx === 0 ? 'eager' : 'lazy'}
-                    decoding={idx === 0 ? 'sync' : 'async'}
-                    fetchPriority={idx === 0 ? 'high' : 'low'}
-                    initial={false}
-                    animate={{
-                      opacity: idx === activeCar ? 1 : 0,
-                      x: idx === activeCar ? 0 : (idx < activeCar ? -60 : 60),
-                      scale: idx === activeCar ? 1 : 0.92,
-                    }}
-                    transition={{ duration: 0.8, ease: 'easeInOut' }}
-                    className="absolute w-full h-full object-contain"
-                    style={{
-                      filter: isDark
-                        ? 'drop-shadow(0 20px 40px rgba(0,107,94,0.35)) drop-shadow(0 0 60px rgba(0,184,153,0.2)) brightness(1.05)'
-                        : 'drop-shadow(0 25px 45px rgba(0,0,0,0.25))'
-                    }}
-                  />
-                ))}
+                {heroCars.map((car, idx) => {
+                  const isActive = idx === activeCar;
+                  const isNext = idx === (activeCar + 1) % heroCars.length;
+                  if (!isActive && !isNext) return null;
+                  return (
+                    <motion.img
+                      key={car.name}
+                      src={car.src}
+                      alt={car.name}
+                      loading={idx === 0 ? 'eager' : 'lazy'}
+                      decoding={idx === 0 ? 'sync' : 'async'}
+                      fetchPriority={idx === 0 ? 'high' : 'auto'}
+                      initial={false}
+                      animate={{
+                        opacity: isActive ? 1 : 0,
+                        x: isActive ? 0 : 60,
+                        scale: isActive ? 1 : 0.92,
+                      }}
+                      transition={{ duration: 0.8, ease: 'easeInOut' }}
+                      className="absolute w-full h-full object-contain"
+                      style={{
+                        filter: isDark
+                          ? 'drop-shadow(0 20px 40px rgba(0,107,94,0.35)) drop-shadow(0 0 60px rgba(0,184,153,0.2)) brightness(1.05)'
+                          : 'drop-shadow(0 25px 45px rgba(0,0,0,0.25))'
+                      }}
+                    />
+                  );
+                })}
               </Link>
 
               {/* Floating Top Speed badge - dynamic */}
