@@ -745,13 +745,23 @@ function Testimonials() {
           </div>
         </ScrollReveal>
         <div className="relative overflow-hidden">
-          <motion.div className="flex gap-6 w-full" key={active} initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }}>
-            {[testimonials[active], testimonials[(active+1)%testimonials.length], testimonials[(active+2)%testimonials.length]].map((t, idx) => (
-              <div key={t.id+idx} className={`flex-1 min-w-0 rounded-2xl p-8 border transition-all ${
+          <motion.div
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full"
+            key={active}
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            {[
+              testimonials[active],
+              testimonials[(active+1)%testimonials.length],
+              testimonials[(active+2)%testimonials.length],
+            ].map((t, idx) => (
+              <div key={t.id+idx} className={`rounded-2xl p-6 sm:p-8 border transition-all ${
                 isDark
                   ? `bg-[#0F0F0F] ${idx===0?'border-[rgba(0,107,94,0.3)]':'border-[rgba(255,255,255,0.05)]'}`
                   : `bg-white ${idx===0?'border-[rgba(0,107,94,0.2)] shadow-[0_4px_20px_rgba(0,107,94,0.08)]':'border-[rgba(0,0,0,0.05)]'}`
-              }`}>
+              } ${idx===1?'hidden sm:block':''} ${idx===2?'hidden lg:block':''}`}>
                 <div className="flex items-center gap-1 mb-4">
                   {[...Array(5)].map((_,i) => <Star key={i} size={13} className={i<t.rating?'text-[#00B899] fill-[#00B899]':'text-[#333]'} />)}
                 </div>
